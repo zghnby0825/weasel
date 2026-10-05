@@ -35,6 +35,10 @@ jobs:
   build:
     needs: lint
     runs-on: windows-2022
+    # fork 自用：本仓库 Actions 默认令牌是只读（read），而发布 Release 必须写 contents，
+    # 所以这里显式声明；不加这一行，Release 步骤会 403
+    permissions:
+      contents: write
     env:
       boost_version: 1.90.0
       BOOST_ROOT: ${{ github.workspace }}\deps\boost_1_90_0
@@ -138,7 +142,7 @@ jobs:
         shell: pwsh
         id: build_weasel
         env:
-          RELEASE_BUILD: ${{ (github.repository == 'rime/weasel' && startsWith(github.ref, 'refs/tags/')) && '1' || '' }}
+          RELEASE_BUILD: ${{ (github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/')) && '1' || '' }}
         run: |
           $ErrorActionPreference = 'Stop'
           if ('${{ matrix.variant }}' -eq 'msbuild') {
@@ -166,12 +170,18 @@ jobs:
 
       # Release-only steps (run on tags or master)
       - name: Extract changelog
-        if: ${{ github.repository == 'rime/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
+        # fork 自用：CHANGELOG.md 里未必有对应 tag 的 <a name="版本"></a> 段落，抽不到不算失败
+        # （发布正文改用 GitHub 自动生成的 release notes）
+        continue-on-error: true
+        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
         shell: pwsh
         run: .\extract_changelog.ps1
 
       - name: Create Nightly release
-        if: ${{ github.repository == 'fxliang/weasel' && github.ref == 'refs/heads/pb' && matrix.variant == 'msbuild' }}
+        # fork 自用：改为「手动触发」（Actions → Run workflow）才发，
+        # 避免每次 push 到 pb 都自动发一版；想恢复上游那样每次 push 都发，
+        # 把 github.event_name == 'workflow_dispatch' 换成 github.ref == 'refs/heads/pb'
+        if: ${{ github.repository == 'zghnby0825/weasel' && github.event_name == 'workflow_dispatch' && matrix.variant == 'msbuild' }}
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -183,11 +193,13 @@ jobs:
             ./output/archives/debug_symbols.7z
 
       - name: Release (stable)
-        if: ${{ github.repository == 'rime/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
+        # fork 自用：打 tag 即自动发布（不再留草稿）；正文用 GitHub 自动生成的 release notes，
+        # 不依赖 CHANGELOG.md 里必须有对应段落
+        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
+          generate_release_notes: true
           files: |
             ./output/archives/weasel*.exe
             ./output/archives/debug_symbols.7z
-          body_path: ${{ github.workspace }}/RELEASE_CHANGELOG.md
