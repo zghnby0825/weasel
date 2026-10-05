@@ -1,10 +1,54 @@
-﻿小狼毫自用分支，不定期可能rebase reset force push
+小狼毫自用分支，不定期可能rebase reset force push
 
 如果觉得我瞎整的还不错，可以请我喝冰阔落🥤 :)
 
 微信赞赏码
 
 <img width="600" height="600" src="https://github.com/user-attachments/assets/503063b1-4951-4d88-aaa3-463585135233" />
+
+
+本分支说明（自用）
+------------------
+
+Fork 自 [fxliang/weasel](https://github.com/fxliang/weasel) 的 `pb` 分支，在上游基础上只做了下面这些事：
+
+* **重绘状态图标**：英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻`
+  无框 · 白色字形 + 深灰描边 · 透明底（字形取自 MapleMono NF CN 的位图渲染），深浅背景下都看得清；
+  源码即 `resource/*.ico`，六个尺寸档位 16/24/32/48/64/256（256 为 PNG 压缩，其余 32bpp DIB）。
+* 其余行为与上游 `pb` 分支一致。
+
+[![Personal Build](https://img.shields.io/github/v/release/zghnby0825/weasel?include_prereleases&label=personal%20build)](https://github.com/zghnby0825/weasel/releases)
+
+自用构建（Personal Build）
+--------------------------
+
+| 项目 | 说明 |
+| :-- | :-- |
+| 发布页 | <https://github.com/zghnby0825/weasel/releases>（预发布版，不定期更新） |
+| 构建环境 | Visual Studio 2022 生成工具 17.14 / MSVC 14.44（v143）/ Windows SDK 10.0.26100 / Boost 1.90.0 / librime 1.17.0 / NSIS 3.12 |
+| 架构 | **x64 + x86**（暂未包含 ARM / ARM64 / ARM64X） |
+| 代码签名 | **无** —— 安装时可能出现 SmartScreen 提示，属正常现象 |
+| 与官方包的差异 | 图标自绘；WinSparkle 用仓库自带的 0.8.1（官方 CI 现编 0.9.2 并打补丁禁止更新对话框自动打开浏览器） |
+
+本地构建
+--------
+
+```cmd
+:: 1) 取预编译 librime（头文件 / 库 / pdb / opencc）
+powershell -ExecutionPolicy Bypass -File get-rime.ps1 -use dev
+
+:: 2) 取 Boost 1.90.0 源码并编译（需已装 MSVC，另见 install_boost.bat）
+install_boost.bat
+
+:: 3) 在「x64 Native Tools Command Prompt for VS 2022」里执行
+copy env.vs2022.bat env.bat
+build.bat data        :: 首次需要：用 plum 安装预置输入方案（需联网）
+build.bat weasel      :: 编译主体（x64 + Win32）
+build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-installer.exe
+```
+
+> 本分支出现的问题请提到**本仓库** [Issues](https://github.com/zghnby0825/weasel/issues)；
+> 上游通用问题仍请走 <https://github.com/rime/weasel/issues>。
 
 
 【小狼毫】輸入法
