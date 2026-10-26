@@ -43,9 +43,8 @@ jobs:
       boost_version: 1.90.0
       BOOST_ROOT: ${{ github.workspace }}\deps\boost_1_90_0
       SDKVER: 10.0.19041.0
-    strategy:
-      matrix:
-        variant: [msbuild, xmake]
+    # fork 自用：只用 msbuild 一条构建链（xmake 变体是给上游做兼容性验证的，
+    # 且它依赖 get-rime.ps1 走匿名 GitHub API，容易 403 rate limit 把整轮 CI 拖红）
     steps:
       - name: Checkout last commit
         uses: actions/checkout@v4
@@ -134,10 +133,6 @@ jobs:
           $ErrorActionPreference = 'Stop'
           .\build.bat data
 
-      - name: Setup xmake
-        if: matrix.variant == 'xmake'
-        uses: xmake-io/github-action-setup-xmake@v1
-
       - name: Build Weasel
         shell: pwsh
         id: build_weasel
@@ -145,21 +140,15 @@ jobs:
           RELEASE_BUILD: ${{ (github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/')) && '1' || '' }}
         run: |
           $ErrorActionPreference = 'Stop'
-          if ('${{ matrix.variant }}' -eq 'msbuild') {
-            .\build.bat arm64 installer
-          } else {
-            .\xbuild.bat arm64 installer
-          }
+          .\build.bat arm64 installer
 
       - name: Compress Debug Symbols
-        if: matrix.variant == 'msbuild'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           output\7z.exe a -t7z "./output/archives/debug_symbols.7z" "output/*.pdb" -r
 
       - name: Upload artifacts
-        if: matrix.variant == 'msbuild'
         uses: actions/upload-artifact@v4
         with:
           name: weasel-artifact-${{ env.git_ref_name }}
@@ -173,7 +162,7 @@ jobs:
         # fork 自用：CHANGELOG.md 里未必有对应 tag 的 <a name="版本"></a> 段落，抽不到不算失败
         # （发布正文改用 GitHub 自动生成的 release notes）
         continue-on-error: true
-        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
+        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') }}
         shell: pwsh
         run: .\extract_changelog.ps1
 
@@ -181,7 +170,7 @@ jobs:
         # fork 自用：改为「手动触发」（Actions → Run workflow）才发，
         # 避免每次 push 到 pb 都自动发一版；想恢复上游那样每次 push 都发，
         # 把 github.event_name == 'workflow_dispatch' 换成 github.ref == 'refs/heads/pb'
-        if: ${{ github.repository == 'zghnby0825/weasel' && github.event_name == 'workflow_dispatch' && matrix.variant == 'msbuild' }}
+        if: ${{ github.repository == 'zghnby0825/weasel' && github.event_name == 'workflow_dispatch' }}
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -195,7 +184,7 @@ jobs:
       - name: Release (stable)
         # fork 自用：打 tag 即自动发布（不再留草稿）；正文用 GitHub 自动生成的 release notes，
         # 不依赖 CHANGELOG.md 里必须有对应段落
-        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') && matrix.variant == 'msbuild' }}
+        if: ${{ github.repository == 'zghnby0825/weasel' && startsWith(github.ref, 'refs/tags/') }}
         uses: softprops/action-gh-release@v2
         with:
           draft: false
