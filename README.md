@@ -1,80 +1,52 @@
-小狼毫自用分支，不定期可能rebase reset force push
+【小狼毫】自用分支
+==================
 
-如果觉得我瞎整的还不错，可以请我喝冰阔落🥤 :)
+基於 **中州韻輸入法引擎（Rime Input Method Engine）** 等開源技術的 Windows 輸入法。
 
-微信赞赏码
+本倉庫是【小狼毫】的**自用分支**：引擎、方案與行為與上游一致，只換掉了狀態圖標，並提供自用的自動構建與安裝包。
 
-<img width="600" height="600" src="https://github.com/user-attachments/assets/503063b1-4951-4d88-aaa3-463585135233" />
+* 下載：本倉庫 [Releases](https://github.com/zghnby0825/weasel/releases)（預發布，不定期更新）
+* 授權條款：[GPLv3](LICENSE.txt)
+* 上游項目主頁：<https://rime.im>
 
-
-本分支说明（自用）
+本分支說明（自用）
 ------------------
 
-Fork 自 [fxliang/weasel](https://github.com/fxliang/weasel) 的 `pb` 分支，在上游基础上只做了下面这些事：
+在上游代碼基礎上只做了兩件事：
 
-* **重绘状态图标**：英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻`
-  无框 · 白色字形 + 深灰描边 · 透明底（字形取自 MapleMono NF CN 的位图渲染），深浅背景下都看得清；
-  源码即 `resource/*.ico`，六个尺寸档位 16/24/32/48/64/256（256 为 PNG 压缩，其余 32bpp DIB）。
-* 其余行为与上游 `pb` 分支一致。
+### 1. 重繪狀態圖標
 
-[![Personal Build](https://img.shields.io/github/v/release/zghnby0825/weasel?include_prereleases&label=personal%20build)](https://github.com/zghnby0825/weasel/releases)
+英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻` —— 五個狀態圖標全部重繪：
 
-自用构建（Personal Build）
+* **無框 · 白色字形 + 深灰描邊 · 透明底**，深色任務欄與淺色任務欄下都看得清（描邊寬約為筆畫的 0.045 倍）
+* 字形取自 [Maple Mono NF CN](https://github.com/subframe7536/maple-font) 的位圖渲染，`↻` 為幾何手繪（同字體無此字形）
+* **字形連同描邊整體等比縮放到填滿畫布**，不預留邊距，確保任務欄 16px 下最大可讀
+* 源碼即 `resource/*.ico`，每個文件六個尺寸檔位：16 / 24 / 32 / 48 / 64（32bpp DIB）+ 256（PNG 壓縮）
+* 改完 `.ico` 必須 `build.bat rebuild` —— 資源腳本不把 `.ico` 當作輸入依賴，增量編譯不會重新嵌圖標
+
+### 2. 自用自動構建
+
+推一個**數字開頭**的 tag（如 `0.17.4-personal-20261005`）即觸發 CI，編譯後直接發布 Release 附安裝包，見下節。
+
+![Personal Build](https://img.shields.io/github/v/release/zghnby0825/weasel?include_prereleases&label=personal%20build)
+
+自用構建（Personal Build）
 --------------------------
 
-| 项目 | 说明 |
+| 項目 | 說明 |
 | :-- | :-- |
-| 发布页 | <https://github.com/zghnby0825/weasel/releases>（预发布版，不定期更新） |
-| 构建环境 | Visual Studio 2022 生成工具 17.14 / MSVC 14.44（v143）/ Windows SDK 10.0.26100 / Boost 1.90.0 / librime 1.17.0 / NSIS 3.12 |
-| 架构 | **x64 + x86**（暂未包含 ARM / ARM64 / ARM64X） |
-| 代码签名 | **无** —— 安装时可能出现 SmartScreen 提示，属正常现象 |
-| 与官方包的差异 | 图标自绘；WinSparkle 用仓库自带的 0.8.1（官方 CI 现编 0.9.2 并打补丁禁止更新对话框自动打开浏览器） |
-
-本地构建
---------
-
-```cmd
-:: 1) 取预编译 librime（头文件 / 库 / pdb / opencc）
-powershell -ExecutionPolicy Bypass -File get-rime.ps1 -use dev
-
-:: 2) 取 Boost 1.90.0 源码并编译（需已装 MSVC，另见 install_boost.bat）
-install_boost.bat
-
-:: 3) 在「x64 Native Tools Command Prompt for VS 2022」里执行
-copy env.vs2022.bat env.bat
-build.bat data        :: 首次需要：用 plum 安装预置输入方案（需联网）
-build.bat weasel      :: 编译主体（x64 + Win32）
-build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-installer.exe
-```
-
-> 本分支出现的问题请提到**本仓库** [Issues](https://github.com/zghnby0825/weasel/issues)；
-> 上游通用问题仍请走 <https://github.com/rime/weasel/issues>。
-
-
-【小狼毫】輸入法
-================
-
-基於 中州韻輸入法引擎／Rime Input Method Engine 等開源技術
-
-式恕堂 版權所無
-
-[![Download](https://img.shields.io/github/v/release/rime/weasel)](https://github.com/rime/weasel/releases/latest)
-[![Build status](https://github.com/rime/weasel/actions/workflows/commit-ci.yml/badge.svg)](https://github.com/rime/weasel/actions/workflows/commit-ci.yml)
-[![GitHub Tag](https://img.shields.io/github/tag/rime/weasel.svg)](https://github.com/rime/weasel)
-
-授權條款：GPLv3
-
-項目主頁：https://rime.im
-
-您可能還需要 RIME 用於其他操作系統的發行版：
-
-  * ibus-rime、fcitx5-rime 或 fcitx-rime 用於 Linux
-  * 【鼠鬚管】用於 macOS （64位）
+| 發布頁 | <https://github.com/zghnby0825/weasel/releases> |
+| 版本號 | `0.17.4`（取自 `weasel.props` 的 `PRODUCT_VERSION`） |
+| 架構 | **x64 + x86 + ARM64 + ARM64X**（安裝包會按系統自動選擇） |
+| 構建環境 | Visual Studio 2022 生成工具 17.14 / MSVC 14.44（v143）/ Windows SDK 10.0.26100（CI 用 10.0.19041）/ Boost 1.90.0 / librime 1.17.0 / NSIS 3.12 |
+| 代碼簽名 | **無** —— 安裝時可能出現 SmartScreen 提示，屬正常現象 |
+| 觸發方式 | 推 tag（`[0-9]+.*`）或 Actions 頁面手動 `Run workflow` |
+| 附帶產物 | 安裝包 `weasel-<版本>-installer.exe` + 調試符號 `debug_symbols.7z` |
 
 安裝輸入法
 ----------
 
-本品適用於 Windows 8.1 ~ Windows 11
+本品適用於 Windows 8.1 ~ Windows 11。
 
 初次安裝時，安裝程序將顯示「安裝選項」對話框。
 
@@ -96,9 +68,31 @@ build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-
 
 用戶詞庫、配置文件位於 `%AppData%\Rime`，可通過菜單中的「用戶文件夾」打開。高水平玩家調教 Rime 輸入法常會用到。
 
-修改詞庫、配置文件後，須「重新部署」方可生效。
+修改詞庫、配置文件後，須「重新部署」方可生效。定製輸入法的方法，請參考 Wiki [《定製指南》](https://github.com/rime/home/wiki/CustomizationGuide)；
+小狼毫獨有的樣式與行為選項，見安裝目錄下 `weasel.yaml` 內的註釋與示例。
 
-定製 Rime 的方法，請參考 Wiki [《定製指南》](https://github.com/rime/home/wiki/CustomizationGuide)。如需定製 Weasel 獨有的樣式和行為，請參考本倉庫 [Wiki 頁面](https://github.com/rime/weasel/wiki)。
+本地構建
+--------
+
+```cmd
+:: 1) 取預編譯 librime（頭文件 / 庫 / pdb / opencc）
+powershell -ExecutionPolicy Bypass -File get-rime.ps1 -use dev
+
+:: 2) 取 Boost 1.90.0 源碼並編譯（需已裝 MSVC，見 install_boost.bat）
+install_boost.bat
+
+:: 3) 在「x64 Native Tools Command Prompt for VS 2022」裏執行
+copy env.vs2022.bat env.bat
+build.bat data        :: 首次需要：用 plum 安裝預置輸入方案（需聯網）
+build.bat weasel      :: 編譯主體（x64 + Win32）
+build.bat arm64       :: 追加 ARM64 / ARM64X（需裝對應工具集，見注 2）
+build.bat installer   :: 打包安裝程序 → output\archives\weasel-<版本>-installer.exe
+```
+
+> 注 1：`get-rime.ps1 -use` 結束時會停掉正在運行的小狼毫服務，僅影響本機正在使用的輸入法。
+> 注 2：ARM64 需要 VS 2022 的 `VC.Tools.ARM64` / `VC.Tools.ARM64EC` / `VC.Tools.ARM` 組件
+> 與 Windows SDK 10.0.19041（ARM32 目標），CI 的 `windows-2022` 已預裝。
+> 注 3：`build.bat` 編譯前會調用 `output\weaselserver.exe /q` 退出服務，編譯完記得重新啟動。
 
 致謝
 ----
@@ -128,12 +122,11 @@ build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-
   * [fxliang](https://github.com/fxliang)
   * [Azuk 443](https://github.com/determ1ne)
 
-  查看更多 [代碼貢獻者](https://github.com/rime/weasel/graphs/contributors)
-
 ### 美術：
 
-  * 圖標設計／[Patricivs](https://github.com/Patricivs)
+  * 原版圖標設計／[Patricivs](https://github.com/Patricivs)
   * 配色方案／Aben、P1461、Patricivs、skoj、佛振、五磅兔
+  * 本分支狀態圖標／自繪，字形取自 [Maple Mono NF CN](https://github.com/subframe7536/maple-font)
 
 ### 本品引用了以下開源軟件：
 
@@ -143,6 +136,7 @@ build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-
   * [Google Test](https://github.com/google/googletest) (BSD 3-Clause License)
   * [LevelDB](https://github.com/google/leveldb) (BSD 3-Clause License)
   * [librime](https://github.com/rime/librime) (BSD 3-Clause License)
+  * [Maple Mono](https://github.com/subframe7536/maple-font) (SIL Open Font License 1.1，本分支圖標字形來源)
   * [marisa-trie](https://github.com/s-yata/marisa-trie) (BSD 2-Clause License, LGPL 2.1)
   * [OpenCC / 開放中文轉換](https://github.com/BYVoid/OpenCC) (Apache License 2.0)
   * [plum](https://github.com/rime/plum) (GNU Lesser General Public License v3.0)
@@ -153,18 +147,7 @@ build.bat installer   :: 打包安装程序 → output\archives\weasel-<版本>-
 問題與反饋
 ----------
 
-發現程序有 bug，請到 GitHub 反饋
-<https://github.com/rime/weasel/issues>
+本分支出現的問題，請提到本倉庫 [Issues](https://github.com/zghnby0825/weasel/issues)。
 
-歡迎提交 pull request
-<https://github.com/rime/weasel/pulls>
-
-Rime 輸入法（不限於 Windows 平臺）功能、使用方法與配置相關的問題，請反饋到
-<https://github.com/rime/home/issues>
-
-聯繫方式
---------
-
-技術交流，歡迎光臨 [Rime 代碼之家](https://github.com/rime/home)，或致信 Rime 開發者 <rimeime@gmail.com>
-
-謝謝！
+引擎、方案、配置等與本分支改動無關的通用問題，請反饋到
+<https://github.com/rime/home/issues>。

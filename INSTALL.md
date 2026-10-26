@@ -1,79 +1,22 @@
-# How to Rime with Weasel
+# Building Weasel (this fork)
 
-## Preparation
+本分支的構建步驟以 [README](README.md) 的「本地構建」一節為準，一份簡版：
 
-  - Install **Visual Studio 2017** or newer version for *Desktop development in C++*
-    with components *ATL*, *MFC*
-
-  - Install dev tools: `git`, `clang-format(>=18.0.0)`
-
-  - Download third-party libraries: `boost(>=1.78.0)`
-
-Optional:
-
-  - install `bash` via *Git for Windows*, for installing data files with `plum`;
-  - install [NSIS](http://nsis.sourceforge.net/Download) for creating installer.
-
-## Checkout source code
-
-Make sure all git submodules are checked out recursively.
-
-```batch
-git clone --recursive https://github.com/rime/weasel.git
-```
-
-## Build and Install Weasel
-
-Locate `weasel` source directory.
-
-### Setup build environment
-
-Edit your build environment settings in `env.bat`.
-You can create the file by copying `env.bat.template` in the source tree.
-
-Make sure `BOOST_ROOT` is set to the existing path `X:\path\to\boost_<version>`.
-
-When using a different version of Visual Studio or platform toolset, un-comment
-lines to set corresponding variables.
-
-Alternatively, start a *Developer Command Prompt* window and set environment
-variables directly in the console, before invocation of `build.bat`:
-
-```batch
-set BOOST_ROOT=X:\path\to\boost_N_NN_N
-```
-
-Get prebuilt librime files(headers, libs, pdb and opencc files) with `get-rime.ps1` in `weasel` source directory
 ```cmd
-powershell .\get-rime.ps1 -use dev
+:: 1) 取預編譯 librime（頭文件 / 庫 / pdb / opencc）
+powershell -ExecutionPolicy Bypass -File get-rime.ps1 -use dev
+
+:: 2) 取 Boost 1.90.0 並編譯
+install_boost.bat
+
+:: 3) 在「x64 Native Tools Command Prompt for VS 2022」裏
+copy env.vs2022.bat env.bat
+build.bat data        :: 首次：用 plum 安裝預置方案（需聯網）
+build.bat weasel      :: 主體（x64 + Win32）
+build.bat arm64       :: 追加 ARM64 / ARM64X（需對應工具集）
+build.bat installer   :: 安裝程序 → output\archives\weasel-<版本>-installer.exe
 ```
 
-### Build
-
-```batch
-cd weasel
-build.bat all
-```
-
-Voila.
-
-Installer will be generated in `output\archives` directory.
-
-### Alternative: using prebuilt Rime binaries
-
-If you've already got a copy of prebuilt binaries of librime, you can simply
-copy `.dll`s / `.lib`s into `weasel\output` / `weasel\lib` directories
-respectively, then build Weasel without the `all` command line option.
-
-```batch
-build.bat boost data opencc
-build.bat weasel
-```
-
-### Install and try it live
-
-```batch
-cd output
-install.bat
-```
-
+* `BOOST_ROOT` 需指向 Boost 目錄；`env.vs2022.bat` 已按 VS 2022 / v143 / SDK 10.0.26100 配好，需要別的工具集時自行改。
+* 已有現成 librime 二進制時，把 `.dll` 放進 `output\`、`.lib` 放進 `lib\`，再 `build.bat weasel` 即可。
+* 改過 `resource\*.ico` 要 `build.bat rebuild`，否則增量編譯不會重新嵌圖標。
