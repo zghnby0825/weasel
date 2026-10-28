@@ -18,16 +18,16 @@
 
 英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻`、程序圖標 —— 六個圖標全部重繪：
 
-![狀態圖標概覽](https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/overview.png)
+![狀態圖標概覽](https://github.com/zghnby0825/weasel/raw/pb/docs/icons/overview.png)
 
 | 圖標 | 文件 | 資源 ID | 用途 |
 | :--: | :-- | :-- | :-- |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/en.png" width="32" alt="英"> | `resource/en.ico` | `IDI_EN` | 英文（ASCII）模式 |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/zh.png" width="32" alt="中"> | `resource/zh.ico` | `IDI_ZH` | 中文模式 |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/full.png" width="32" alt="全"> | `resource/full.ico` | `IDI_FULL_SHAPE` | 全角 |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/half.png" width="32" alt="半"> | `resource/half.ico` | `IDI_HALF_SHAPE` | 半角 |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/reload.png" width="32" alt="↻"> | `resource/reload.ico` | `IDI_RELOAD` | 部署中 |
-| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/weasel.png" width="32" alt="程序圖標"> | `resource/weasel.ico` | `IDI_ICON` | 程序 / 窗口圖標 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/en.png" width="32" alt="英"> | `resource/en.ico` | `IDI_EN` | 英文（ASCII）模式 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/zh.png" width="32" alt="中"> | `resource/zh.ico` | `IDI_ZH` | 中文模式 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/full.png" width="32" alt="全"> | `resource/full.ico` | `IDI_FULL_SHAPE` | 全角 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/half.png" width="32" alt="半"> | `resource/half.ico` | `IDI_HALF_SHAPE` | 半角 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/reload.png" width="32" alt="↻"> | `resource/reload.ico` | `IDI_RELOAD` | 部署中 |
+| <img src="https://github.com/zghnby0825/weasel/raw/pb/docs/icons/weasel.png" width="32" alt="程序圖標"> | `resource/weasel.ico` | `IDI_ICON` | 程序 / 窗口圖標 |
 
 * **無框 · 白色字形 + 深灰描邊 · 透明底**，深色任務欄與淺色任務欄下都看得清（描邊寬約為筆畫的 0.045 倍）
 * 字形取自 [Maple Mono NF CN](https://github.com/subframe7536/maple-font) 的位圖渲染，`↻` 為幾何手繪（同字體無此字形）
