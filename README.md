@@ -6,8 +6,8 @@
 本倉庫是【小狼毫】的**自用分支**：引擎、方案與行為與上游一致，只換掉了狀態圖標，並提供自用的自動構建與安裝包。
 
 * 下載：本倉庫 [Releases](https://github.com/zghnby0825/weasel/releases)（預發布，不定期更新）
-* 授權條款：[GPLv3](LICENSE.txt)
-* 上游項目主頁：<https://rime.im>
+* 授權條款：[GPLv3](https://github.com/zghnby0825/weasel/blob/pb/LICENSE.txt)
+* 上游倉庫：[fxliang/weasel](https://github.com/fxliang/weasel)（項目主頁 <https://rime.im>）
 
 本分支說明（自用）
 ------------------
@@ -16,12 +16,25 @@
 
 ### 1. 重繪狀態圖標
 
-英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻` —— 五個狀態圖標全部重繪：
+英文 `英`、中文 `中`、全角 `全`、半角 `半`、部署中 `↻`、程序圖標 —— 六個圖標全部重繪：
+
+![狀態圖標概覽](https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/overview.png)
+
+| 圖標 | 文件 | 資源 ID | 用途 |
+| :--: | :-- | :-- | :-- |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/en.png" width="32" alt="英"> | `resource/en.ico` | `IDI_EN` | 英文（ASCII）模式 |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/zh.png" width="32" alt="中"> | `resource/zh.ico` | `IDI_ZH` | 中文模式 |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/full.png" width="32" alt="全"> | `resource/full.ico` | `IDI_FULL_SHAPE` | 全角 |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/half.png" width="32" alt="半"> | `resource/half.ico` | `IDI_HALF_SHAPE` | 半角 |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/reload.png" width="32" alt="↻"> | `resource/reload.ico` | `IDI_RELOAD` | 部署中 |
+| <img src="https://raw.githubusercontent.com/zghnby0825/weasel/pb/docs/icons/weasel.png" width="32" alt="程序圖標"> | `resource/weasel.ico` | `IDI_ICON` | 程序 / 窗口圖標 |
 
 * **無框 · 白色字形 + 深灰描邊 · 透明底**，深色任務欄與淺色任務欄下都看得清（描邊寬約為筆畫的 0.045 倍）
 * 字形取自 [Maple Mono NF CN](https://github.com/subframe7536/maple-font) 的位圖渲染，`↻` 為幾何手繪（同字體無此字形）
+* 程序圖標去掉原版的黑色圓角底，只留白色字形，與其餘五個統一為同一套風格
 * **字形連同描邊整體等比縮放到填滿畫布**，不預留邊距，確保任務欄 16px 下最大可讀
 * 源碼即 `resource/*.ico`，每個文件六個尺寸檔位：16 / 24 / 32 / 48 / 64（32bpp DIB）+ 256（PNG 壓縮）
+* 上表預覽圖由 `resource/*.ico` 的 256 檔等比縮出，存於 `docs/icons/`
 * 改完 `.ico` 必須 `build.bat rebuild` —— 資源腳本不把 `.ico` 當作輸入依賴，增量編譯不會重新嵌圖標
 
 ### 2. 自用自動構建
@@ -150,4 +163,4 @@ build.bat installer   :: 打包安裝程序 → output\archives\weasel-<版本>-
 本分支出現的問題，請提到本倉庫 [Issues](https://github.com/zghnby0825/weasel/issues)。
 
 引擎、方案、配置等與本分支改動無關的通用問題，請反饋到
-<https://github.com/rime/home/issues>。
+<https://github.com/fxliang/weasel/issues>。
