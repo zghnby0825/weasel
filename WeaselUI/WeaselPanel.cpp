@@ -631,6 +631,9 @@ bool WeaselPanel::_DrawCandidates() {
   PtTextFormat& commenttxtFormat = m_pD2D->pCommentFormat;
   auto padx = DPI_SCALE(m_style.hilite_padding_x);
   auto pady = DPI_SCALE(m_style.hilite_padding_y);
+  // 字体行框与墨迹并不同心（墨迹略偏下），整体上移一点点让文字在行内视觉居中。
+  // 负值 = 上移，单位逻辑像素，随 DPI 缩放。
+  const int text_dy = DPI_SCALE(-4);
   const auto hilitefunc = [&](int i, uint32_t back_color, uint32_t shadow_color,
                               uint32_t border_color, uint32_t border = 0) {
     auto rect = _GetInflatedCandRect(i);
@@ -665,6 +668,7 @@ bool WeaselPanel::_DrawCandidates() {
       return;
     if (m_istorepos)
       rc.OffsetRect(0, m_offsetys[i]);
+    rc.OffsetRect(0, text_dy);
     _TextOut(rc, text, text.length(), color, textFormat);
   };
   for (auto i = 0; i < m_candidateCount; i++) {
@@ -688,6 +692,7 @@ bool WeaselPanel::_DrawCandidates() {
           !label.empty() && labeltxtFormat.Get()) {
         if (m_istorepos)
           rc.OffsetRect(0, m_offsetys[i]);
+        rc.OffsetRect(0, text_dy);
         _TextOut(rc, label, label.length(), label_text_color, labeltxtFormat);
       }
     }
