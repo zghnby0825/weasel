@@ -42,18 +42,18 @@ BOOL RegisterProfiles() {
   ULONG cchIconFile =
       GetModuleFileNameW(g_hInst, achIconFile, ARRAYSIZE(achIconFile));
 
-  const auto register_profile = [&](LANGID langId, HKL hkl, BOOL enable) {
+  const auto register_profile = [&](LANGID langId, BOOL enable) {
     return pInputProcessorProfileMgr->RegisterProfile(
         c_clsidTextService, langId, c_guidProfile, text_service_desc_str,
         text_service_desc_len, achIconFile, cchIconFile, TEXTSERVICE_ICON_INDEX,
-        hkl, 0, enable, 0);
+        NULL, 0, enable, 0);
   };
 
-  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HANS, NULL, hansEnable));
-  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HANT, NULL, hantEnable));
-  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HONGKONG, NULL, hkEnable));
-  CHECK_HR(register_profile(TEXTSERVICE_LANGID_MACAU, NULL, macauEnable));
-  CHECK_HR(register_profile(TEXTSERVICE_LANGID_SINGAPORE, NULL, sgEnable));
+  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HANS, hansEnable));
+  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HANT, hantEnable));
+  CHECK_HR(register_profile(TEXTSERVICE_LANGID_HONGKONG, hkEnable));
+  CHECK_HR(register_profile(TEXTSERVICE_LANGID_MACAU, macauEnable));
+  CHECK_HR(register_profile(TEXTSERVICE_LANGID_SINGAPORE, sgEnable));
 #undef CHECK_HR
 
   return TRUE;
