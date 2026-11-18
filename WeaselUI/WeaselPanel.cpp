@@ -23,6 +23,11 @@ using namespace weasel;
 namespace {
 constexpr UINT WM_WEASEL_REFRESH = WM_APP + 1;
 
+// 墨迹中心相对行框中心的偏移，按字号的比例补偿（0.22 × 字号dip）。
+// 实测 Maple Mono NF CN、font_point=14（≈18.7dip）时约 4px，与原先写死的
+// DPI_SCALE(-4) 等效，但能随字号/行高自适应。
+constexpr float kInkOffsetRatio = 0.22f;
+
 class ThreadDpiAwarenessScope {
  public:
   ThreadDpiAwarenessScope() {
@@ -672,9 +677,6 @@ bool WeaselPanel::_DrawCandidates() {
   PtTextFormat& commenttxtFormat = m_pD2D->pCommentFormat;
   auto padx = DPI_SCALE(m_style.hilite_padding_x);
   auto pady = DPI_SCALE(m_style.hilite_padding_y);
-  // 字体行框与墨迹并不同心（墨迹略偏下），整体上移一点点让文字在行内视觉居中。
-  // 负值 = 上移，单位逻辑像素，随 DPI 缩放。
-  const int text_dy = DPI_SCALE(-4);
   const auto hilitefunc = [&](int i, uint32_t back_color, uint32_t shadow_color,
                               uint32_t border_color, uint32_t border = 0) {
     auto rect = _GetInflatedCandRect(i);
@@ -709,7 +711,6 @@ bool WeaselPanel::_DrawCandidates() {
       return;
     if (m_istorepos)
       rc.OffsetRect(0, m_offsetys[i]);
-    rc.OffsetRect(0, text_dy);
     _TextOut(rc, text, text.length(), color, textFormat);
   };
   for (auto i = 0; i < m_candidateCount; i++) {
@@ -733,7 +734,6 @@ bool WeaselPanel::_DrawCandidates() {
           !label.empty() && labeltxtFormat.Get()) {
         if (m_istorepos)
           rc.OffsetRect(0, m_offsetys[i]);
-        rc.OffsetRect(0, text_dy);
         _TextOut(rc, label, label.length(), label_text_color, labeltxtFormat);
       }
     }
@@ -822,6 +822,22 @@ void WeaselPanel::_TextOut(CRect& rc,
   }
   float offsetx = (float)rc.left;
   float offsety = (float)rc.top;
+
+  // 垂直方向的两段修正，取代原先写死的 DPI_SCALE(-4)：
+  //   1) 行框在矩形内居中 —— 行高可能被 emoji 等回退字体撑大，或标签/注释框与正文
+  //      框高不同，此时文字贴顶就会显得偏上/偏下；
+  //   2) 墨迹相对行框偏下（ascent/descent 不对称），按字号比例补偿，
+  //      font_point=14（≈18.7dip）时约 4px，与原先的固定值一致，但会随字号自适应。
+  const bool vertical_text = (m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT ||
+                              m_style.layout_type == UIStyle::LAYOUT_VERTICAL_TEXT_FULLSCREEN);
+  if (!vertical_text) {
+    DWRITE_TEXT_METRICS tm = {};
+    if (SUCCEEDED(pTextLayout->GetMetrics(&tm)) && tm.height > 0)
+      offsety += (rc.Height() - tm.height) * 0.5f;
+    const float fontSize = pTextFormat->GetFontSize();
+    if (fontSize > 0)
+      offsety -= roundf(fontSize * kInkOffsetRatio);
+  }
 
   DWRITE_OVERHANG_METRICS omt;
   pTextLayout->GetOverhangMetrics(&omt);
